@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红警老黄历</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header {
+            background-color: #C8171F;
+            height: 40px;
+            line-height: 40px;
+            color: #FFF;
+            text-align: center;
+            font-size: 18px;
+            width: 360px;
+        }
+
+        main {
+            width: 360px;
+        }
+
+        main .ji,
+        main .yi {
+            display: flex;
+            flex-direction: row;
+            padding: 30px;
+            line-height: 20px;
+        }
+
+        .yi {
+            background-color: #9F9;
+        }
+
+        .ji {
+            background-color: #F99;
+        }
+
+        .big {
+            font-size: 30px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px 20px;
+        }
+
+        .content span {
+            margin: 0px 10px;
+            display: block;
+        }
+
+        footer {
+
+            line-height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        今天是<span id="date"></span>
+    </header>
+    <main>
+        <div class="yi">
+            <div class="big">
+                宜
+            </div>
+            <div class="content">
+                <span>防守</span>
+                <span>作图</span>
+            </div>
+
+        </div>
+        <div class="ji">
+            <div class="big">
+                忌
+            </div>
+            <div class="content">
+                <span>进攻</span>
+                <span>钓鱼</span>
+            </div>
+        </div>
+    </main>
+    <footer>
+        座位朝向: 面向<span id="direction"></span>玩游戏, 胜率最高。<br>
+        幸运颜色: <span id="color"></span><br>
+        本页面纯属娱乐, 请勿当真。
+    </footer>
+
+    <script>
+        var app = {
+            data: {
+                date: '',
+                yi: [],
+                ji: [],
+                direction: '',
+                color: ''
+            },
+            config: {
+                tags: [
+                    '钓鱼',
+                    '防守',
+                    '进攻',
+                    '偷家',
+                    '快攻',
+                    '捡箱子',
+                    '骚扰对手',
+                    '矿车堵路',
+                    '防空堵路',
+                    '延展对手'
+                ],
+                direction: ['东', '南', '西', '北'],
+                colors: ['红色', '黄色', '蓝色', '绿色', '紫色', '橙色', '青色', '粉色'],
+            },
+            run() {
+                this.init();
+                this.render();
+            },
+            init() {
+                // 每天的宜忌和方向都是随机的, 每天只会变一次
+                var date = localStorage.getItem('date');
+                if (date === this.getDate()) {
+                    this.data.date = date;
+                    this.data.yi = localStorage.getItem('yi').split(',');
+                    this.data.ji = localStorage.getItem('ji').split(',');
+                    this.data.direction = localStorage.getItem('direction');
+                    // return;
+                }
+                this.data.date = this.getDate();
+                this.data.yi = this.getYi();
+                this.data.ji = this.getJi();
+                this.data.direction = this.getDirection();
+                this.color = this.getColor();
+
+                localStorage.setItem('date', this.data.date);
+                localStorage.setItem('yi', this.data.yi);
+                localStorage.setItem('ji', this.data.ji);
+                localStorage.setItem('direction', this.data.direction);
+            },
+            render() {
+                document.getElementById('date').innerText = this.data.date;
+                document.getElementById('direction').innerText = this.data.direction;
+                this.renderYi();
+                this.renderJi();
+                document.getElementById('color').innerText = this.color;
+            },
+            renderYi() {
+                var yi = this.data.yi;
+                var yiHtml = '';
+                for (var i = 0; i < yi.length; i++) {
+                    yiHtml += '<span>' + yi[i] + '</span>';
+                }
+                document.querySelector('.yi .content').innerHTML = yiHtml;
+            },
+            renderJi() {
+                var ji = this.data.ji;
+                var jiHtml = '';
+                for (var i = 0; i < ji.length; i++) {
+                    jiHtml += '<span>' + ji[i] + '</span>';
+                }
+                document.querySelector('.ji .content').innerHTML = jiHtml;
+            },
+            getDate() {
+                var date = new Date();
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var day = date.getDate();
+
+                return year + '年' + month + '月' + day + '日';
+            },
+            getYi() {
+                var returnCount = 3;
+                var yi = this.config.tags;
+                var yiLen = yi.length;
+                var yiArr = [];
+                while (yiArr.length < returnCount) {
+                    yiIndex = Math.floor(Math.random() * yiLen);
+                    if (yiArr.indexOf(yi[yiIndex]) === -1) {
+                        yiArr.push(yi[yiIndex]);
+                    }
+                }
+                return yiArr;
+            },
+            getJi() {
+                var returnCount = 3;
+                var ji = this.config.tags;
+                var jiLen = ji.length;
+                var jiArr = [];
+                while (jiArr.length < returnCount) {
+                    var jiIndex = Math.floor(Math.random() * jiLen);
+                    if (jiArr.indexOf(ji[jiIndex]) === -1 && this.data.yi.indexOf(ji[jiIndex]) === -1) {
+                        jiArr.push(ji[jiIndex]);
+                    }
+                }
+                return jiArr;
+            },
+            getDirection() {
+                var direction = this.config.direction;
+                var directionLen = direction.length;
+                var directionIndex = Math.floor(Math.random() * directionLen);
+                return direction[directionIndex];
+            },
+            getColor() {
+                var colors = this.config.colors;
+                var colorsLen = colors.length;
+                var colorsIndex = Math.floor(Math.random() * colorsLen);
+                return colors[colorsIndex];
+            }
+        };
+
+        app.run();
+    </script>
+</body>
+
+</html>
