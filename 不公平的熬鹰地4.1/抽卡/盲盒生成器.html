@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>盲盒生成器</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+            width: 100%;
+            height: 100%;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .app .input {
+            display: flex;
+            flex-direction: row;
+            height: 80%;
+            width: 90%;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 30%;
+            height: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            flex: auto;
+            border: 1px solid #000;
+            outline: none;
+            font-size: 18px;
+            resize: none;
+        }
+
+        label {
+            /* 文字竖排*/
+            writing-mode: vertical-rl;
+            margin-left: 30px;
+            display: block;
+            font-size: 20px;
+            color: #FFF;
+            background-color: black;
+            padding: 5px;
+            height: 100%;
+            border: 1px solid #000;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 20%;
+        }
+
+        .footer .id {
+            padding: 10px;
+            font-size: 20px;
+            margin-right: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .footer button {
+            padding: 10px;
+            font-size: 20px;
+            background-color: black;
+            color: #FFF;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="input">
+            <label>要生成盲盒的单位和数量</label>
+            <textarea name="" id="要生成盲盒的单位" cols="30" rows="10">
+                BFRT=10
+                HTNK=20
+            </textarea>
+            <label>盲盒模板</label>
+            <textarea name="" id="盲盒模板" cols="30" rows="10">
+                [{注册名}{编号}]
+                UIName={显示名}
+                Name={注册名}
+                DeploysInto={注册名}
+                GroupAs={注册名}
+                Cost=1000
+                Size=6
+                Armor=light
+                Image=TRUCKB
+                Owner=British,French,Germans,Americans,Alliance,Russians,Confederation,Africans,Arabs,YuriCountry
+                Sight=5
+                Speed=4
+                Crewed=no
+                Points=40
+                Turret=no
+                Weight=2
+                Crusher=no
+                Primary=none
+                Soylent=100
+                Category=AFV
+                DieSound=GenVehicleDie
+                Strength=200
+                Explosion=TWLT070,S_BANG48,S_BRNL58,S_CLSN58,S_TUMU60
+                Locomotor={4A582741-9839-11d1-B709-00A024DDAFD1}
+                MaxDebris=2
+                Secondary=none
+                TechLevel=-1
+                Trainable=no
+                VoiceMove=
+                CrushSound=TankCrush
+                CrateGoodie=yes
+                DebrisTypes=TIRE
+                SelfHealing=no
+                ThreatPosed=50
+                VoiceAttack=GenAllVehicleAttackCommand
+                VoiceSelect=GenAllVehicleSelect
+                CarriesCrate=yes
+                MovementZone=Normal
+                Insignificant=no
+                VoiceFeedback=
+                DebrisMaximums=4
+                DamageParticleSystems=SparkSys,SmallGreySSys
+                AllowedToStartInMultiplayer=no
+            </textarea>
+            <label>生成的盲盒</label>
+            <textarea name="" id="生成的盲盒" cols="30" rows="10"></textarea>
+        </div>
+        <div class="footer">
+            <input type="text" class="id" id="开始编号" value="" placeholder="开始编号: 默认 200" />
+            <button onclick="生成()">生成</button>
+        </div>
+    </div>
+
+
+    <script>
+        去除文本框每行开头的空格('要生成盲盒的单位');
+        去除文本框每行开头的空格('盲盒模板');
+
+        function 去除文本框每行开头的空格(文本框编号) {
+            let 文本框 = document.getElementById(文本框编号);
+            文本框.value = 文本框.value.split('\n').map(行 => 行.trim()).join('\n');
+        }
+
+        // 如果缓存存在就读取缓存
+        if (localStorage.getItem('要生成盲盒的单位')) {
+            document.getElementById('要生成盲盒的单位').value = localStorage.getItem('要生成盲盒的单位');
+        }
+        if (localStorage.getItem('盲盒模板')) {
+            document.getElementById('盲盒模板').value = localStorage.getItem('盲盒模板');
+        }
+
+        var 单位名字对照表 = { "GAPOWR": "Name:GAPOWR", "GAREFN": "Name:GAREFN", "GACNST": "Name:GACNST", "GAPILE": "Name:GAPILE", "GASAND": "Name:GASAND", "GADEPT": "Name:GADEPT", "GATECH": "Name:GATECH", "GAWEAP": "Name:GAWEAP", "CALAB": "Name:EinsteinLab", "NAPOWR": "Name:NAPOWR", "NATECH": "Name:NATECH", "NAHAND": "Name:NAHAND", "GAWALL": "Name:GAWALL", "NARADR": "Name:NARADR", "NAWEAP": "Name:NAWEAP", "NAREFN": "Name:NAREFN", "NAWALL": "Name:NAWALL", "CAHSE07": "Name:CAHSE04", "NAPSIS": "Name:YURIRAD", "CASYDN01": "Name:CASYDN01", "NALASR": "Name:NALASR", "NASAM": "Name:NASAM", "CASYDN02": "Name:CASYDN02", "GAYARD": "Name:GAYARD", "NAIRON": "Name:NAIRON", "NACNST": "Name:NACNST", "NADEPT": "Name:NADEPT", "GACSPH": "Name:GACSPH", "GADUMY": "Name:GADUMY", "GAWEAT": "Name:GAWEAT", "CABHUT": "Name:CABHUT", "GALITE": "Name:GALITE", "REDLAMP": "Name:REDLAMP", "GRENLAMP": "Name:GRENLAMP", "BLUELAMP": "Name:BLUELAMP", "YELWLAMP": "Name:YELWLAMP", "PURPLAMP": "Name:PURPLAMP", "INORANLAMP": "Name:INORANLAMP", "INGRNLMP": "Name:INGRNLMP", "INREDLMP": "Name:INREDLMP", "INBLULMP": "Name:INBLULMP", "CITY01": "Name:CITY01", "CITY02": "Name:CITY02", "CITY03": "Name:CITY03", "CITY04": "Name:CITY04", "CITY05": "Name:CITY05", "CITY06": "Name:CITY06", "CAHOSP": "Name:CAHOSP", "INGALITE": "Name:INGALITE", "INYELWLAMP": "Name:INYELWLAMP", "INPURPLAMP": "Name:INPURPLAMP", "NEGLAMP": "Name:NEGLAMP", "NEGRED": "Name:NEGRED", "TESLA": "Name:TESLA", "NAMISL": "Name:NAMISL", "ATESLA": "Name:ATESLA", "CAMACH": "Name:CAMACH", "TSTLAMP": "Name:TSTLAMP", "CASYDN03": "Name:CASYDN03", "AMMOCRAT": "Name:AMMOCRAT", "GAGREEN": "Name:GAGREEN", "NAYARD": "Name:NAYARD", "GASPYSAT": "Name:GASPYSAT", "GAGAP": "Name:GAGAP", "GTGCAN": "Name:GTGCAN", "NANRCT": "Name:NANRCT", "GAPILL": "Name:GAPILL", "NAFLAK": "Name:NAFLAK", "CAOUTP": "Name:CAOUTP", "CATHOSP": "Name:CAHOSP", "CAAIRP": "Name:CAAIRP", "CAOILD": "Name:CAOILD", "NACLON": "Name:NACLON", "GAOREP": "Name:GAOREP", "CACITY01": "Name:CACITY01", "CACITY02": "Name:CACITY02", "CACITY03": "Name:CACITY03", "CACITY04": "Name:CACITY04", "CANEWY01": "Name:CANEWY01", "CANEWY04": "Name:CANEWY04", "CANEWY05": "Name:CANEWY05", "CASWST01": "Name:CASWST01", "CATECH01": "Name:CATECH01", "CATEXS01": "Name:CATEXS01", "CATEXS02": "Name:CATEXS02", "CAWASH01": "Name:CAWASH01", "CAFARM01": "Name:CAFARM01", "CAFARM02": "Name:CAFARM02", "CALIT01E": "Name:CALIT01E", "CALIT01N": "Name:CALIT01N", "CALIT01S": "Name:CALIT01S", "CALIT01W": "Name:CALIT01W", "CAMISC01": "Name:CAMISC01", "CAMISC02": "Name:CAMISC02", "CAMISC03": "Name:CAMISC03", "CAMISC04": "Name:CAMISC04", "CAPOL01E": "Name:CAPOL01E", "CAPOL01N": "Name:CAPOL01N", "CAPOL01S": "Name:CAPOL01S", "CAPOL01W": "Name:CAPOL01W", "CASIN01E": "Name:CASIN01E", "CASIN01N": "Name:CASIN01N", "CASIN01S": "Name:CASIN01S", "CASIN01W": "Name:CASIN01W", "CAPARS01": "Name:CAPARS01", "GAAIRC": "Name:GAAIRC", "CAFRMA": "Name:CAFRMA", "CAFRMB": "Name:CAFRMB", "CAWASH05": "Name:CAWASH05", "CAWASH04": "Name:CAWASH04", "CAWASH03": "Name:CAWASH03", "CAWASH07": "Name:CAWASH07", "CAWASH11": "Name:CAWASH11", "CAWSH12": "Name:CAWSH12", "CAWASH14": "Name:CAWSH14", "CAWASH09": "Name:CAWSH09", "CAWASH10": "Name:CAWSH10", "CAWASH13": "Name:CAWASH13", "CAARMY01": "Name:CAARMY01", "CAUSFGL": "Name:CAUSFGL", "CAWASH08": "Name:CAWSH08", "CALIT03E": "Name:CALIT03E", "CALIT03N": "Name:CALIT03N", "CALIT03S": "Name:CALIT03S", "CALIT03W": "Name:CALIT03W", "CALIT02L": "Name:CALIT02L", "CALIT02R": "Name:CALIT02R", "CAHSE01": "Name:CAHSE01", "CAWT01": "Name:CAWT01", "CATS01": "Name:CATS01", "CABARN02": "Name:CABARN02", "CAWA2A": "Name:CAWA2A", "CAWA2B": "Name:CAWA2A", "CAWA2C": "Name:CAWA2A", "CAWA2D": "Name:CAWA2A", "AMRADR": "Name:GAAIRC", "CAPRS03": "Name:CAPRS03", "CAGARD01": "Name:CAGARD01", "CARUS01": "Name:CARUS01", "CAMIAM01": "Name:CAMIAM01", "CATRAN01": "Name:CATRAN01", "CAMIAM02": "Name:CAMIAM02", "CANWY05": "Name:CANWY05", "MAYAN": "Name:MAYAN", "CAEUR1": "Name:CAEUR1", "CAEUR2": "Name:CAEUR2", "CAEUR04": "Name:CAEUR04", "CAMEX01": "Name:CAMEX01", "CARUS02A": "Name:CARUS02A", "CARUS02B": "Name:CARUS02B", "CARUS02C": "Name:CARUS02C", "CARUS02D": "Name:CARUS02D", "CARUS02E": "Name:CARUS02E", "CARUS02F": "Name:CARUS02F", "CANEWY06": "Name:CANEWY06", "CANEWY07": "Name:CANEWY07", "CANEWY08": "Name:CANEWY08", "CAPARS02": "Name:CAPARS02", "CAPARS08": "Name:CAPARS08", "CAPARS09": "Name:CAPARS09", "CARUS03": "Name:CARUS03", "CANEWY10": "Name:CANEWY10", "CANEWY11": "Name:CANEWY11", "CANEWY12": "Name:CANEWY12", "CANEWY13": "Name:CANEWY13", "CANEWY14": "Name:CANEWY13", "CANEWY15": "Name:CANEWY15", "CANEWY16": "Name:CANEWY15", "CANEWY17": "Name:CANEWY17", "CANEWY18": "Name:CANEWY18", "CAPARS04": "Name:CAPRS04", "CAPARS05": "Name:CAPRS05", "CAPARS06": "Name:CAPRS06", "CAPARS07": "Name:CAPRS07", "CAWASH15": "Name:CAWASH15", "CAPARS10": "Name:CAPARS10", "CAPARS13": "Name:CAPARS13", "CAPARS14": "Name:CAPARS14", "CAGAS01": "Name:CAGAS01", "CAPARS11": "Name:CAPARS11", "CAPARS12": "Name:CAPARS12", "CAFARM06": "Name:CAFARM06", "CAMIAM04": "Name:CAMIAM04", "NAPSYB": "Name:NAPSYB", "NAPSYA": "Name:NAPSYA", "CAIND01": "Name:CAIND01", "CACOLO01": "Name:CACOLO01", "CANWY09": "Name:CANWY09", "CANWY22": "Name:CANWY22", "CANWY23": "Name:CANWY23", "CANWY24": "Name:CANWY24", "CANWY25": "Name:CANWY25", "CANWY26": "Name:CANWY26", "CATEXS03": "Name:CATEXS03", "CATEXS04": "Name:CATEXS04", "CATEXS05": "Name:CATEXS05", "CARUS02G": "Name:CARUS02G", "CACHIG04": "Name:CACHIG04", "CAMIAM03": "Name:CAMIAM03", "CARUS07": "Name:CARUS07", "CATEXS06": "Name:CATEXS06", "CATEXS07": "Name:CATEXS07", "CATEXS08": "Name:CATEXS08", "CACHIG01": "Name:CACHIG01", "CACHIG02": "Name:CACHIG02", "CACHIG03": "Name:CACHIG03", "CAWASH16": "Name:CAWASH16", "CAWASH17": "Name:CAWASH17", "CACHIG05": "Name:CACHIG05", "CAWASH19": "Name:CAWASH19", "CARUS08": "Name:CARUS08", "CARUS09": "Name:CARUS09", "CARUS10": "Name:CARUS10", "CARUS11": "Name:CARUS11", "CANEWY20": "Name:CANEWY20", "CANEWY21": "Name:CANEWY20", "CARUS04": "Name:CARUS04", "CARUS05": "Name:CARUS04", "CARUS06": "Name:CARUS06", "CAMSC01": "Name:CAMSC01", "CAMSC02": "Name:CAMSC02", "CAMSC03": "Name:CAMSC02", "CAMSC04": "Name:CAMSC04", "CAMSC05": "Name:CAMSC04", "CAMSC06": "Name:CAMSC06", "CAMSC07": "Name:CAMSC07", "CAWASH18": "Name:CAWASH18", "CAEURO05": "Name:CAEURO05", "CAPARK01": "Name:CAPARK01", "CAPARK02": "Name:CAPARK02", "CAPARK03": "Name:CAPARK03", "CAHSE02": "Name:CAHSE02", "CAHSE03": "Name:CAHSE03", "CAHSE04": "Name:CAHSE04", "CASTRT01": "Name:CASTRT01", "CASTRT02": "Name:CASTRT02", "CASTL01": "Name:CASTL01", "CASTL02": "Name:CASTL02", "CASTL03": "Name:CASTL03", "CASTL04": "Name:CASTL04", "CAHSE05": "Name:CAHSE05", "CAHSE06": "Name:CAHSE06", "CAMIAM05": "Name:CAMIAM05", "CAMIAM06": "Name:CAMIAM06", "CAMIAM07": "Name:CAMIAM07", "CAFNCB": "Name:CAFNCB", "CAFNCW": "Name:CAFNCW", "CAMEX02": "Name:MAYANRUINS", "CAMEX03": "Name:MAYANRUINS", "CAMEX04": "Name:MAYANTEMPLE", "CAMEX05": "Name:MAYANRUINS", "CACHIG06": "Name:CAWT01", "CAMSC08": "Name:CAMSC07", "CAMSC09": "Name:CAMSC07", "CAARMY02": "Name:CAARMY01", "CAARMY03": "Name:CAARMY01", "CAARMY04": "Name:CAARMY01", "TEMMORLAMP": "Name:TEMMORLAMP", "TEMDAYLAMP": "Name:TEMDAYLAMP", "TEMDUSLAMP": "Name:TEMDUSLAMP", "TEMNITLAMP": "Name:TEMNITLAMP", "SNOMORLAMP": "Name:SNOMORLAMP", "SNODAYLAMP": "Name:SNODAYLAMP", "SNODUSLAMP": "Name:SNODUSLAMP", "SNONITLAMP": "Name:SNONITLAMP", "CAKRMW": "Name:CAKRMW", "CARUFGL": "Name:RUSSIANFLAG", "CAFRFGL": "Name:FRENCHFLAG", "CATRAN02": "Name:CATRAN01", "CACUFGL": "Name:CUBANFLAG", "CASKFGL": "Name:KOREAFLAG", "CALBFGL": "Name:LYBIAFLAG", "CAMIAM08": "Name:CAMIAM08", "CAMISC05": "Name:CAMISC05", "CAMISC06": "Name:CAMISC06", "CASTL05A": "Name:CASTL05", "CASTL05B": "Name:CASTL05", "CASTL05C": "Name:CASTL05", "CASTL05D": "Name:CASTL05", "CASTL05E": "Name:CASTL05", "CASTL05F": "Name:CASTL05", "CASTL05G": "Name:CASTL05", "CASTL05H": "Name:CASTL05", "CAMSC10": "Name:CAMSC10", "CAGEFGL": "Name:GERMANFLAG", "CAUKFGL": "Name:UKFLAG", "CAWASH06": "Name:CAWASH13", "CAMSC11": "Name:CAMISC11", "CAMSC12": "Name:CAMISC12", "CAMSC13": "Name:CAMISC13", "CAPOFGL": "Name:POLISHFLAG", "CAMSC12A": "Name:CAMISC12", "CAMOV01": "Name:CAMOV01", "CAMOV02": "Name:CAMOV02", "CABUNK01": "Name:CABUNK01", "CABUNK02": "Name:CABUNK01", "CAFNCP": "Name:CAFNCP", "CASTRT03": "Name:CASTRT03", "CASTRT04": "Name:CASTRT04", "CASTRT05": "Name:CASTRT05", "YACNST": "Name:YACNST", "YAPOWR": "Name:BioR", "YABRCK": "Name:Ybarracks", "YAWEAP": "Name:YWarfactory", "YAYARD": "Name:Ynaval", "YADEPT": "Name:GADEPT", "YATECH": "Name:Yblab", "GAFWLL": "Name:Citadel", "YAGGUN": "Name:GattCannon", "YAPSYT": "Name:YAPSYT", "NAINDP": "Name:IndustrialPlant", "YAGRND": "Name:Grinder", "YAGNTC": "Name:YAGNTC", "CASLAB": "Name:CASLAB", "CATIME": "Name:CATIME", "YAPPET": "Name:YAPPET", "CALOND04": "Name:CALOND04", "CALOND05": "Name:CALOND05", "CALOND06": "Name:CALOND06", "CAMOON01": "Name:CAMOON01", "CATRAN03": "Name:CATRAN03", "CAEAST01": "Name:CAEAST01", "CAEGYP01": "Name:CAPYR01", "CAEGYP02": "Name:CAPYR01", "CAEGYP03": "Name:CAEGYP03", "CALA01": "Name:CACITY01", "CALA02": "Name:CALA02", "CALA03": "Name:CALA03", "CALA04": "Name:CALA04", "CALA05": "Name:CALA05", "CALOND01": "Name:CACITY01", "CALOND02": "Name:CALOND02", "CALOND03": "Name:CACITY01", "CAMORR01": "Name:CACITY01", "CAMORR02": "Name:CACITY01", "CAMORR03": "Name:CACITY01", "CASANF01": "Name:CACITY01", "CASANF02": "Name:CACITY01", "CASANF03": "Name:CACITY01", "CASANF04": "Name:CASANF04", "CASANF05": "Name:CASANF05", "CASEAT01": "Name:CASEAT01", "NATBNK": "Name:NATBNK", "GAGATE_A": "Name:GATE1", "CASANF09": "Name:CASANF04", "CASANF10": "Name:CASANF04", "CASANF11": "Name:CASANF04", "CASANF12": "Name:CASANF04", "CASANF13": "Name:CASANF04", "CASANF14": "Name:CASANF04", "CASANF06": "Name:CACITY01", "CASANF07": "Name:CACITY01", "CASANF08": "Name:CACITY01", "CASEAT02": "Name:CASEAT02", "YACOMD": "Name:YACOMD", "YAPPPT": "Name:YAPPET", "GAROBO": "Name:Robocont", "YAREFN": "Name:SMIN", "YAROCK": "Name:YAROCK", "NABNKR": "Name:NABNKR", "CASANF15": "Name:CASANF15", "CASANF16": "Name:CAFARM06", "CASANF17": "Name:CACITY01", "CASANF18": "Name:CACITY01", "CASIN03E": "Name:CASIN03", "CASIN03S": "Name:CASIN03", "CAURB01": "Name:CAURB01", "CAURB02": "Name:CAURB02", "CAURB03": "Name:CAURB03", "CAPOWR": "Name:CAPOWR", "CALA07": "Name:CALA07", "CAEGYP06": "Name:CAPYR01", "CALA08": "Name:CALA08", "CAEAST02": "Name:CAEAST02", "CABARR01": "Name:CABARR", "CABARR02": "Name:CABARR", "CAMORR04": "Name:CACITY01", "CAMORR05": "Name:CACITY01", "CALA09": "Name:CALA09", "CAEGYP04": "Name:CAPYR01", "CAEGYP05": "Name:CAPYR01", "CALA06": "Name:CALA06", "CAMORR06": "Name:CAMORR05", "CAMORR07": "Name:CACITY01", "CAMORR08": "Name:CACITY01", "CAMORR09": "Name:CACITY01", "CAMORR10": "Name:CACITY01", "CATIME01": "Name:CATIME02", "CATIME02": "Name:CATIME02", "CALA10": "Name:CALA10", "CALA11": "Name:CALA04", "CALA12": "Name:CALA04", "CALA13": "Name:CALA03", "CAPARK04": "Name:CAPARK01", "CAPARK05": "Name:CAPARK01", "CAPARK06": "Name:CAPARK01", "CALA14": "Name:CALA01", "CALA15": "Name:CALA01", "CABUNK03": "Name:CABUNK01", "CABUNK04": "Name:CABUNK01", "CALUNR01": "Name:CALUNR01", "CALUNR02": "Name:CAUSFGL" }
+        function 生成() {
+            let 要生成盲盒的单位 = document.getElementById('要生成盲盒的单位').value;
+            let 盲盒模板 = document.getElementById('盲盒模板').value;
+            // 缓存盲盒单位和模板
+            localStorage.setItem('要生成盲盒的单位', 要生成盲盒的单位);
+            localStorage.setItem('盲盒模板', 盲盒模板);
+            let 生成的盲盒 = document.getElementById('生成的盲盒');
+            let 返回结果 = '';
+
+            var 单位列表 = 要生成盲盒的单位.split('\n');
+            var 注册编号 = document.getElementById('开始编号').value || 200;
+
+            返回结果 += "[VehicleTypes]\n";
+            for (let i = 0; i < 单位列表.length; i++) {
+                var [注册名, 数量] = 单位列表[i].split('=');
+                for (let j = 0; j < 数量; j++) {
+                    返回结果 += 注册编号 + '=' + 注册名 + (j + 1) + '\n';
+                    注册编号++;
+                }
+            }
+            返回结果 += '\n\n';
+
+            for (let i = 0; i < 单位列表.length; i++) {
+                var [注册名, 参数] = 单位列表[i].split('=');
+                var [数量, 显示名] = 参数.split(','); // 数量和显示名
+                if (显示名 === undefined) {
+                    显示名 = 单位名字对照表[注册名];
+                }
+                for (let j = 0; j < 数量; j++) {
+                    返回结果 += 盲盒模板.replace(/\{注册名\}/g, 注册名)
+                        .replace(/\{显示名\}/g, 显示名)
+                        .replace('{编号}', j + 1) + '\n\n';
+                }
+            }
+
+            生成的盲盒.value = 返回结果;
+        }
+    </script>
+</body>
+
+</html>

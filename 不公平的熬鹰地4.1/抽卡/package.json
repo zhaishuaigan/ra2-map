@@ -1,0 +1,12 @@
+{
+  "name": "kelong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "还原红警到初始版本": "git clear",
+    "复制附件到红警目录": "xcopy assets D:\\soft\\games\\Ra2Game412-dev /y"
+  },
+  "author": "",
+  "license": "ISC"
+}

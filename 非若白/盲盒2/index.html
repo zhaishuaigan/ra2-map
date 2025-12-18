@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Draw SHP on Canvas</title>
+    <script src="shp.js"></script>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+    <script>
+        // 获取Canvas元素
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // SHP文件的URL
+        var shpUrl = location + '/assets/effpoison.shp';
+        drawSHP(shpUrl);
+        async function drawSHP(shpUrl) {
+            var geojson = await shp(shpUrl);
+            geojson.features.forEach(function (feature) {
+                // 获取特征的多边形
+                var polygon = feature.geometry.coordinates;
+
+                // 开始绘制路径
+                ctx.beginPath();
+
+                // 遍历多边形的每个点
+                polygon[0].forEach(function (point, index) {
+                    // 如果是第一个点，移动到该点
+                    if (index === 0) {
+                        ctx.moveTo(point[0], point[1]);
+                    } else {
+                        // 否则，绘制线段到该点
+                        ctx.lineTo(point[0], point[1]);
+                    }
+                });
+
+                // 闭合路径
+                ctx.closePath();
+
+                // 绘制多边形
+                ctx.stroke();
+            });
+        }
+
+    </script>
+</body>
+
+</html>

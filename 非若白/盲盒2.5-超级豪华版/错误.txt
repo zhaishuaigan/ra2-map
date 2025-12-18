@@ -1,0 +1,8 @@
+Error: Command failed: D:\Project\ra2\CNCMaps\CNCMaps.Renderer.exe -i "D:\Project\ra2_map\非若白\盲盒2.5-超级豪华版\不公平的熬鹰地盲盒2地形修改版.yrm" -p -o "不公平的熬鹰地盲盒2地形修改版" -m "D:\Project\ra2\game" -Y -F --mark-start-pos -s 4 -z +(400,0) --thumb-png --bkp
+
+δ���������쳣:  System.NullReferenceException: δ�������������õ������ʵ����
+   �� CNCMaps.FileFormats.IniFile.LoadAresIncludes(VirtualFileSystem vfs)
+   �� CNCMaps.Engine.Game.Theater..ctor(TheaterType theaterType, ModConfig config, VirtualFileSystem vfs, IniFile rules, IniFile art)
+   �� CNCMaps.Engine.Map.Map.LoadTheater()
+   �� CNCMaps.Engine.RenderEngine.Execute()
+   �� CNCMaps.Program.Main(String[] args)

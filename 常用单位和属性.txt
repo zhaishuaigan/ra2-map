@@ -1,0 +1,75 @@
+
+CAGARD01  警戒厅        --> 兵营
+CAFRMB     移动式厕所   -->  电厂
+CAURB03    聚光灯       -->  雷达
+CASTRT05   公交站       --> 车厂
+-------------------------------
+# 隧道：
+首先注册隧道类型
+[TunnelTypes]
+1=CivilianTunnel
+给隧道类型写上该隧道类型的属性
+[CivilianTunnel]
+Passengers=8
+将隧道类型赋予隧道建筑
+[CATNNL]
+Tunnel=CivilianTunnel
+Passengers=8
+SizeLimit=8
+PipScale=Passengers;如果你想显示里面多少单位
+
+----------------------------
+# 电力支持的高级用法, 增强地堡需要增幅器才能开火
+PoweredBy=CAMISC03
+
+---------------------------
+# 武器相关
+Projectile=xxx
+SubjectToCliffs=no
+------------------------
+Radar=yes ;雷达功能 
+SpySat=yes ;间谍卫星功能 
+--------------------------------------
+ImmuneToVeins=yes 【无视泰矿藤蔓，ra2无效】 
+ImmuneToPsionics=yes 【免疫精神武器＝是】
+ImmuneToRadiation=yes 輻射對他無效
+ImmuneToPoison=yes 免疫病狙毒气
+Parasiteable=no 寄生武器无法攻击它
+Bombable= 单位能不能被疯狂伊文绑上炸药
+--------------------------------------
+# 建造前提
+Prerequisite=CAPOWR
+PrerequisiteOverride=CAPOWR
+
+RADAR 雷达类建筑，这种类型的新建筑应该同时在PrerequisiteRadar=中注册 
+BARRACKS 兵营类建筑，这种类型的新建筑应该同时在PrerequisiteBarracks=中注册 
+TECH 科技类建筑，这种类型的新建筑应该同时在PrerequisiteTech=中注册 
+PROC 矿厂类建筑，这种类型的新建筑应该同时在PrerequisiteProc=中注册 
+POWER 发电厂类建筑，这种类型的新建筑应该同时在PrerequisitePower=中注册 
+FACTORY 战车工厂建筑，这种类型的新建筑应该同时在PrerequisiteFactory=中注册 
+
+--------------------------------------
+Owner=British,French,Germans,Americans,Alliance,Russians,Confederation,Africans,Arabs,YuriCountry
+RequiredHouses=British,French,Germans,Americans,Alliance,Russians,Confederation,Africans,Arabs,YuriCountry
+--------------------------------------
+# 油井油田
+ProduceCashAmount=1000
+ProduceCashDelay=60
+Capturable=true ; true能占领, false 不可以占领
+---------------------------------------
+Powered=yes ; 需要电力支持
+Power=100填数值。这个代码指定建筑单位占用的电力量。当为负数时，则为供电。
+---------------------------------------------------------
+Factory= 
+填下表中的对应项。这个代码指定工厂类建筑的生产类型 
+BuildingType 建筑工厂，一般用在基地 
+VehicleType 战车工厂，一般用在战车制造厂 
+AircraftType 战机工厂，一般用在停机坪和机场 
+InfantryType 步兵工厂，一般用在兵营 
+
+---------------------------------------------------------
+# 躲避高危险地区的几率
+ThreatAvoidanceCoefficient=0
+ 
+
+

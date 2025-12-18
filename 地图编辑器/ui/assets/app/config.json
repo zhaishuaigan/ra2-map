@@ -1,0 +1,57 @@
+{
+    "debug": true,
+    "taskbar": [
+        {
+            "title": "开始菜单",
+            "name": "Start",
+            "path": "app/start/",
+            "index": "start.vue",
+            "icon": "icon.png"
+        },
+        {
+            "title": "微信",
+            "name": "wechat",
+            "path": "app/wechat/",
+            "index": "wechat.vue",
+            "icon": "icon.png",
+            "debug": false
+        },
+        {
+            "title": "必应",
+            "name": "browser",
+            "path": "app/browser/",
+            "index": "browser.vue",
+            "icon": "icon.png"
+        }
+    ],
+    "appList": [
+        {
+            "title": "设置",
+            "name": "Setting",
+            "path": "app/setting/",
+            "index": "setting.vue",
+            "icon": "icon.png"
+        },
+        {
+            "title": "记事本",
+            "name": "Notepad",
+            "path": "app/notepad/",
+            "index": "notepad.vue",
+            "icon": "icon.png"
+        },
+        {
+            "title": "翟帅干的简历",
+            "name": "jianli",
+            "path": "app/jianli/",
+            "index": "jianli.vue",
+            "icon": "icon.png"
+        },
+        {
+            "title": "必应",
+            "name": "browser",
+            "path": "app/browser/",
+            "index": "browser.vue",
+            "icon": "icon.png"
+        }
+    ]
+}

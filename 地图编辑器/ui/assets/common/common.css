@@ -1,0 +1,20 @@
+html,
+body,
+#app {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+}
+
+.groundGlass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+}
